@@ -9,8 +9,8 @@ namespace Enemies
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private NavMeshAgent agent;
-        public event Action OnSpawn = delegate { };
-        public event Action OnDeath = delegate { };
+        [SerializeField] private float damageReceivedOnHit = 1;
+        private HealthPoints healthPoints;
     
         private void Reset() => FetchComponents();
 
@@ -19,6 +19,7 @@ namespace Enemies
         private void FetchComponents()
         {
             agent ??= GetComponent<NavMeshAgent>();
+            healthPoints = GetComponent<HealthPoints>();
         }
 
         private void OnEnable()
@@ -34,14 +35,6 @@ namespace Enemies
             var destination = townCenter.transform.position;
             destination.y = transform.position.y;
             agent.SetDestination(destination);
-            StartCoroutine(AlertSpawn());
-        }
-
-        private IEnumerator AlertSpawn()
-        {
-            //Waiting one frame because event subscribers could run their onEnable after us.
-            yield return null;
-            OnSpawn();
         }
 
         private void Update()
@@ -50,14 +43,8 @@ namespace Enemies
                 && Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance)
             {
                 Debug.Log($"{name}: I'll die for my people!");
-                Die();
+                healthPoints.Damage(damageReceivedOnHit);
             }
-        }
-
-        private void Die()
-        {
-            OnDeath();
-            ServiceLocator.Instance.AccessService<EnemyPoolingService>().StoreEnemy(gameObject);
         }
     }
 }

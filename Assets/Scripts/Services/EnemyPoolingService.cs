@@ -8,7 +8,7 @@ public class EnemyPoolingService : BaseService
 
     private GenericPool<GameObject> enemyPool;
 
-    private void Start()
+    private void Awake()
     {
         enemyPool = new GenericPool<GameObject>((parameters) =>
         {
@@ -21,6 +21,7 @@ public class EnemyPoolingService : BaseService
 
     public GameObject GetEnemy(Vector3 position, Quaternion rotation)
     {
+        Debug.Log(enemyPool);
         return enemyPool.GetObject(position, rotation);
     }
 

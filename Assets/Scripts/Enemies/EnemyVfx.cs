@@ -5,7 +5,7 @@ namespace Enemies
     [RequireComponent(typeof(Enemy))]
     public class EnemyVfx : MonoBehaviour
     {
-        private Enemy _enemy;
+        private HealthPoints _enemyHealth;
         [SerializeField] private RandomContainer<ParticleSystem> deathPrefabs;
 
         private void Reset() => FetchComponents();
@@ -14,17 +14,17 @@ namespace Enemies
 
         private void FetchComponents()
         {
-            _enemy = GetComponent<Enemy>();
+            _enemyHealth = GetComponent<HealthPoints>();
         }
 
         private void OnEnable()
         {
-            _enemy.OnDeath += HandleDeath;
+            _enemyHealth.OnDeath += HandleDeath;
         }
 
         private void OnDisable()
         {
-            _enemy.OnDeath -= HandleDeath;
+            _enemyHealth.OnDeath -= HandleDeath;
         }
 
         private void HandleDeath()

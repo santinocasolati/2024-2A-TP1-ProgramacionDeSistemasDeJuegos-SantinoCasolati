@@ -9,7 +9,7 @@ namespace Enemies
         [SerializeField] private AudioPlayer audioSourcePrefab;
         [SerializeField] private RandomContainer<AudioClipData> spawnClips;
         [SerializeField] private RandomContainer<AudioClipData> explosionClips;
-        private Enemy _enemy;
+        private HealthPoints _enemyHealth;
 
         private void Reset() => FetchComponents();
 
@@ -18,7 +18,7 @@ namespace Enemies
         private void FetchComponents()
         {
             // "a ??= b" is equivalent to "if(a == null) a = b" 
-            _enemy ??= GetComponent<Enemy>();
+            _enemyHealth ??= GetComponent<HealthPoints>();
         }
         
         private void OnEnable()
@@ -28,14 +28,14 @@ namespace Enemies
                 Debug.LogError($"{nameof(audioSourcePrefab)} is null!");
                 return;
             }
-            _enemy.OnSpawn += HandleSpawn;
-            _enemy.OnDeath += HandleDeath;
+            _enemyHealth.OnSpawn += HandleSpawn;
+            _enemyHealth.OnDeath += HandleDeath;
         }
         
         private void OnDisable()
         {
-            _enemy.OnSpawn -= HandleSpawn;
-            _enemy.OnDeath -= HandleDeath;
+            _enemyHealth.OnSpawn -= HandleSpawn;
+            _enemyHealth.OnDeath -= HandleDeath;
         }
 
         private void HandleDeath()

@@ -17,13 +17,18 @@ public class Spawner : MonoBehaviour
 
     private void Start()
     {
-        enemyPoolingService = ServiceLocator.Instance.AccessService<EnemyPoolingService>();
-
         StartCoroutine(SpawnEnemies());
+    }
+
+    private void FetchComponents()
+    {
+        enemyPoolingService ??= ServiceLocator.Instance.AccessService<EnemyPoolingService>();
     }
 
     private IEnumerator SpawnEnemies()
     {
+        FetchComponents();
+
         while (!destroyCancellationToken.IsCancellationRequested)
         {
             for (int i = 0; i < spawnsPerPeriod; i++)
