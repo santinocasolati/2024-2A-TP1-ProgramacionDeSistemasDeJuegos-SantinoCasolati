@@ -57,7 +57,7 @@ namespace Enemies
         private void Die()
         {
             OnDeath();
-            Destroy(gameObject);
+            ServiceLocator.Instance.AccessService<EnemyPoolingService>().StoreEnemy(gameObject);
         }
     }
 }
