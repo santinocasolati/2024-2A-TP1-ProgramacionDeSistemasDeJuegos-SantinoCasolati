@@ -21,7 +21,6 @@ public class EnemyPoolingService : BaseService
 
     public GameObject GetEnemy(Vector3 position, Quaternion rotation)
     {
-        Debug.Log(enemyPool);
         return enemyPool.GetObject(position, rotation);
     }
 

@@ -10,31 +10,31 @@ namespace Enemies
     {
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private float damageReceivedOnHit = 1;
-        private HealthPoints healthPoints;
-    
-        private void Reset() => FetchComponents();
+        [SerializeField] private float damageToObjectives = 2;
 
-        private void Awake() => FetchComponents();
+        private HealthPoints healthPoints;
+        private StructuresLocationService structuresLocationService;
+        private GameObject target;
     
         private void FetchComponents()
         {
             agent ??= GetComponent<NavMeshAgent>();
-            healthPoints = GetComponent<HealthPoints>();
+            healthPoints ??= GetComponent<HealthPoints>();
+            structuresLocationService ??= ServiceLocator.Instance.AccessService<StructuresLocationService>();
         }
 
         private void OnEnable()
         {
-            //Is this necessary?? We're like, searching for it from every enemy D:
-            var townCenter = GameObject.FindGameObjectWithTag("TownCenter");
-            if (townCenter == null)
-            {
-                Debug.LogError($"{name}: Found no {nameof(townCenter)}!! :(");
-                return;
-            }
+            SetTarget();
 
-            var destination = townCenter.transform.position;
-            destination.y = transform.position.y;
-            agent.SetDestination(destination);
+            if (structuresLocationService)
+                structuresLocationService.OnStoreModified += SetTarget;
+        }
+
+        private void OnDisable()
+        {
+            if (structuresLocationService)
+                structuresLocationService.OnStoreModified -= SetTarget;
         }
 
         private void Update()
@@ -44,7 +44,25 @@ namespace Enemies
             {
                 Debug.Log($"{name}: I'll die for my people!");
                 healthPoints.Damage(damageReceivedOnHit);
+
+                if (target != null)
+                    target.GetComponent<HealthPoints>().Damage(damageToObjectives);
             }
+        }
+
+        private void SetTarget()
+        {
+            FetchComponents();
+
+            if (!structuresLocationService) return;
+
+            target = structuresLocationService.GetClosestStructureLocation(transform.position);
+
+            if (target == null) return;
+
+            Vector3 closestStructure = target.transform.position;
+            closestStructure.y = transform.position.y;
+            agent.SetDestination(closestStructure);
         }
     }
 }

@@ -6,17 +6,15 @@ public class StructureHealthDecorator : HealthPoints
 {
     [SerializeField] private float respawnTime = 3f;
 
+    private RespawnQueueService respawnQueueService;
+
     public override void Die()
     {
         base.Die();
-        StartCoroutine(Respawn());
-        gameObject.SetActive(false);
-    }
 
-    private IEnumerator Respawn()
-    {
-        yield return new WaitForSeconds(respawnTime);
-        ResetHealth();
-        gameObject.SetActive(true);
+        respawnQueueService = ServiceLocator.Instance.AccessService<RespawnQueueService>();
+
+        gameObject.SetActive(false);
+        respawnQueueService.RespawnCharacter(gameObject, respawnTime);
     }
 }

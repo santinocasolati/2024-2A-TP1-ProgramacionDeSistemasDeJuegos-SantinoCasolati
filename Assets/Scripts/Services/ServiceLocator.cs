@@ -25,10 +25,7 @@ public class ServiceLocator : MonoBehaviour
     public void RegisterService(System.Type serviceType, BaseService service)
     {
         if (_registeredServices.ContainsKey(serviceType))
-        {
-            Debug.LogError($"ERROR: There is already a service of type {serviceType} registered");
             return;
-        }
 
         _registeredServices.Add(serviceType, service);
     }
@@ -36,10 +33,7 @@ public class ServiceLocator : MonoBehaviour
     public void UnregisterService(System.Type serviceType)
     {
         if (!_registeredServices.ContainsKey(serviceType))
-        {
-            Debug.LogError($"ERROR: There is no service of type {serviceType} registered");
             return;
-        }
 
         _registeredServices.Remove(serviceType);
     }
@@ -47,10 +41,7 @@ public class ServiceLocator : MonoBehaviour
     public T AccessService<T>() where T : class
     {
         if (!_registeredServices.ContainsKey(typeof(T)))
-        {
-            Debug.LogError($"ERROR: Trying to access unregistered service of type {typeof(T)}");
             return default;
-        }
 
         return _registeredServices[typeof(T)] as T;
     }
