@@ -7,8 +7,7 @@ namespace Enemies
     public class EnemySfx : MonoBehaviour
     {
         [SerializeField] private AudioPlayer audioSourcePrefab;
-        [SerializeField] private RandomContainer<AudioClipData> spawnClips;
-        [SerializeField] private RandomContainer<AudioClipData> explosionClips;
+        [SerializeField] private EnemyDataSO enemyData;
         private HealthPoints _enemyHealth;
 
         private void Reset() => FetchComponents();
@@ -40,12 +39,12 @@ namespace Enemies
 
         private void HandleDeath()
         {
-            PlayRandomClip(explosionClips, audioSourcePrefab);
+            PlayRandomClip(enemyData.ExplosionClips, audioSourcePrefab);
         }
 
         private void HandleSpawn()
         {
-            PlayRandomClip(spawnClips, audioSourcePrefab);
+            PlayRandomClip(enemyData.SpawnClips, audioSourcePrefab);
         }
 
         private void PlayRandomClip(RandomContainer<AudioClipData> container, AudioPlayer sourcePrefab)

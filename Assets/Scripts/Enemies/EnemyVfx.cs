@@ -6,7 +6,7 @@ namespace Enemies
     public class EnemyVfx : MonoBehaviour
     {
         private HealthPoints _enemyHealth;
-        [SerializeField] private RandomContainer<ParticleSystem> deathPrefabs;
+        [SerializeField] private EnemyDataSO enemyData;
 
         private void Reset() => FetchComponents();
 
@@ -29,7 +29,7 @@ namespace Enemies
 
         private void HandleDeath()
         {
-            if(!deathPrefabs.TryGetRandom(out var prefab))
+            if(!enemyData.DeathPrefabs.TryGetRandom(out var prefab))
                 return;
             var vfx = Instantiate(prefab, transform.position, transform.rotation);
             var mainModule = vfx.main;

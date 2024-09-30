@@ -7,8 +7,6 @@ public class StructuresLocationService : BaseService
 {
     private List<Structure> structuresStore = new List<Structure>();
 
-    public event Action OnStoreModified = delegate { };
-
     public void Register(Structure structure)
     {
         if (structuresStore.Contains(structure))
@@ -18,7 +16,6 @@ public class StructuresLocationService : BaseService
         }
 
         structuresStore.Add(structure);
-        OnStoreModified?.Invoke();
     }
 
     public void Unregister(Structure structure)
@@ -30,7 +27,6 @@ public class StructuresLocationService : BaseService
         }
 
         structuresStore.Remove(structure);
-        OnStoreModified?.Invoke();
     }
 
     public GameObject GetClosestStructureLocation(Vector3 startPoint)

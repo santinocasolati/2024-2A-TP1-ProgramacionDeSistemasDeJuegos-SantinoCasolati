@@ -9,12 +9,12 @@ namespace Enemies
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private NavMeshAgent agent;
-        [SerializeField] private float damageReceivedOnHit = 1;
-        [SerializeField] private float damageToObjectives = 2;
+        [SerializeField] private EnemyDataSO enemyData;
 
         private HealthPoints healthPoints;
         private StructuresLocationService structuresLocationService;
         private GameObject target;
+        private bool targetLocked = false;
     
         private void FetchComponents()
         {
@@ -26,27 +26,30 @@ namespace Enemies
         private void OnEnable()
         {
             SetTarget();
-
-            if (structuresLocationService)
-                structuresLocationService.OnStoreModified += SetTarget;
         }
 
         private void OnDisable()
         {
-            if (structuresLocationService)
-                structuresLocationService.OnStoreModified -= SetTarget;
+            targetLocked = false;
         }
 
         private void Update()
         {
-            if (agent.hasPath
-                && Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance)
+            if (target != null && target.activeSelf)
             {
-                Debug.Log($"{name}: I'll die for my people!");
-                healthPoints.Damage(damageReceivedOnHit);
-
-                if (target != null)
-                    target.GetComponent<HealthPoints>().Damage(damageToObjectives);
+                if (agent.hasPath
+                && Vector3.Distance(transform.position, agent.destination) <= agent.stoppingDistance)
+                {
+                    if (target.TryGetComponent(out HealthPoints targetHealth))
+                    {
+                        Debug.Log($"{name}: I'll die for my people!");
+                        healthPoints.Damage(enemyData.DamageRecievedOnHit);
+                        targetHealth.Damage(enemyData.DamageToObjectives);
+                    }
+                }
+            } else
+            {
+                healthPoints.Die();
             }
         }
 
@@ -63,6 +66,7 @@ namespace Enemies
             Vector3 closestStructure = target.transform.position;
             closestStructure.y = transform.position.y;
             agent.SetDestination(closestStructure);
+            targetLocked = true;
         }
     }
 }
