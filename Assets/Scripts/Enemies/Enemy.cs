@@ -14,7 +14,6 @@ namespace Enemies
         private HealthPoints healthPoints;
         private StructuresLocationService structuresLocationService;
         private GameObject target;
-        private bool targetLocked = false;
     
         private void FetchComponents()
         {
@@ -25,12 +24,8 @@ namespace Enemies
 
         private void OnEnable()
         {
+            target = null;
             SetTarget();
-        }
-
-        private void OnDisable()
-        {
-            targetLocked = false;
         }
 
         private void Update()
@@ -49,7 +44,7 @@ namespace Enemies
                 }
             } else
             {
-                healthPoints.Die();
+                SetTarget();
             }
         }
 
@@ -66,7 +61,6 @@ namespace Enemies
             Vector3 closestStructure = target.transform.position;
             closestStructure.y = transform.position.y;
             agent.SetDestination(closestStructure);
-            targetLocked = true;
         }
     }
 }
